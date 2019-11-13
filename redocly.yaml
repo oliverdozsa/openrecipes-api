@@ -1,0 +1,8 @@
+
+apiTitle: openrecipes
+splitSpec: false
+codeSamples: false
+swaggerUI: true
+travis: true
+repo: oliverdozsa/openrecipes-api
+oasVersion: 3.0.0

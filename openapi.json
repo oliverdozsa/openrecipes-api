@@ -1,0 +1,130 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "openrecipes",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    },
+    "description": "# Openrecipes\nThis is the API doc of https://github.com/oliverdozsa/openrecipes.\n"
+  },
+  "paths": {
+    "/ingredientnames": {
+      "get": {
+        "summary": "Query a page of ingredient names",
+        "parameters": [
+          {
+            "name": "languageId",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          },
+          {
+            "name": "nameLike",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "minLength": 2
+            },
+            "required": false
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            },
+            "required": false
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 50,
+              "default": 25
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Page of ingredient names.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngredientNamePage"
+                },
+                "example": {
+                  "totalCount": 2,
+                  "items": [
+                    {
+                      "ingredientId": 1,
+                      "name": "Lemon"
+                    },
+                    {
+                      "ingredientId": 2,
+                      "name": "Orange"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, possibly due to invalid query parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "IngredientName": {
+        "description": "An ingredient name.",
+        "type": "object",
+        "properties": {
+          "ingredientId": {
+            "description": "ID",
+            "type": "integer"
+          },
+          "name": {
+            "description": "The name",
+            "type": "string"
+          }
+        }
+      },
+      "IngredientNamePage": {
+        "description": "Page of ingredient names.",
+        "type": "object",
+        "properties": {
+          "items": {
+            "description": "Ingredient names.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IngredientName"
+            }
+          }
+        }
+      }
+    }
+  }
+}
