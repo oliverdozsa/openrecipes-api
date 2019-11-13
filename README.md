@@ -1,5 +1,5 @@
 # openrecipes OpenAPI Specification
-[![Build Status](https://travis-ci.com/oliverdozsa/openrecipes-api.svg?branch=master)](https://travis-ci.com/oliverdozsa/openrecipes-api)
+[![Build Status](https://travis-ci.org/oliverdozsa/openrecipes-api.svg?branch=master)](https://travis-ci.org/oliverdozsa/openrecipes-api)
 ## Steps to finish
 
 1. Enable [Travis](https://docs.travis-ci.com/user/getting-started/#To-get-started-with-Travis-CI%3A) for your repository (**note**: you already have `.travis.yml` file)
