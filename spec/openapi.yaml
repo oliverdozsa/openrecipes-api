@@ -47,9 +47,9 @@ paths:
                 $ref: '#/components/schemas/IngredientNamePage'
               example:
                 totalCount: 2
-                items: [ {ingredientId: 1, name: 'Lemon'}, {ingredientId: 2, name: 'Orange'} ]
+                items: [{ingredientId: 1, name: 'Lemon'}, {ingredientId: 2, name: 'Orange'}]
         '400':
-          description: Bad request, possibly due to invalid query parameters
+          description: Map of error keys to error messages
           content:
             application/json:
               schema:
@@ -58,6 +58,23 @@ paths:
                   type: array
                   items:
                     type: string
+              example:
+                "languagedId": ["Missing field", "Another problem"]
+                "": ["Some global errors", "And some more"]
+
+  '/sourcepages':
+    get:
+      summary: All source pages
+      responses:
+        '200':
+          description: List of source pages
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SourcePageList'
+              example:
+                totalCount: 2
+                items: [{id: 1, name: "TheRecipeWebSite"}, {id: 2, name: "Cooking.com"}]
 
 components:
   schemas:
@@ -65,7 +82,7 @@ components:
       description: An ingredient name.
       type: object
       properties:
-        ingredientId:
+        id:
           description: ID
           type: integer
         name:
@@ -76,7 +93,55 @@ components:
       type: object
       properties:
         items:
-          description: Ingredient names.
+          type: array
+          items:
+            $ref: '#/components/schemas/IngredientName'
+        totalCount:
+          type: integer
+    SourcePageList:
+      description: List of source pages.
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/SourcePage'
+        totalCount:
+          type: integer
+    SourcePage:
+      description: A source page.
+      type: object
+      properties:
+        id:
+          description: ID
+          type: integer
+        name:
+          description: The name of the source page.
+          type: string
+    RecipePage:
+      description: Page of recipes.
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Recipe'
+        totalCount:
+          type: integer
+    Recipe:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        url:
+          type: string
+        numofings:
+          type: integer
+        sourcePage:
+          $ref: '#/components/schemas/SourcePage'
+        ingredients:
           type: array
           items:
             $ref: '#/components/schemas/IngredientName'
