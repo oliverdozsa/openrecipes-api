@@ -134,6 +134,256 @@
           }
         }
       }
+    },
+    "/recipes": {
+      "get": {
+        "summary": "A page of recipes",
+        "parameters": [
+          {
+            "name": "searchMode",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "composedofnumber",
+                "composedofratio"
+              ]
+            },
+            "description": "Valid search modes:\n * composed-of-number - Search is based on the number of ingredients (according to the included ingredients param) in recipes\n * composed-of-ratio - Search is based on the ratio of ingredients (according to the included ingredients param) in recipes\n"
+          },
+          {
+            "name": "minIngs",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Recipes with less than this number of ingredients will be excluded from the search."
+          },
+          {
+            "name": "maxIngs",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Recipes with more than this number of ingredients will be excluded from the search."
+          },
+          {
+            "name": "orderBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "name",
+                "numofings"
+              ]
+            },
+            "description": "Valid order by clauses:\n * name: Order by recipe name.\n * numofings: Order number of ingredients of recipes\n"
+          },
+          {
+            "name": "orderBySort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
+            "name": "unknownIngs",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "This is required only in case the searchMode param is composedofnumber. It defines how many unknown ingredients to consider (ingredients that aren't part of the included ingredients).\n"
+          },
+          {
+            "name": "unknownIngsRel",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "eq",
+                "gt",
+                "lt",
+                "ge",
+                "le"
+              ]
+            },
+            "description": "This is required only in case the searchMode param is composedofnumber. It defines the how to interpret the unknownIngs parameter.\n * eq - equal\n * gt - greater than\n * lt - less than\n * ge - greater than or equal\n * le - less than or equal\n"
+          },
+          {
+            "name": "goodIngs",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "This is required only in case the searchMode param is composedofnumber. It defines how many ingredients to consider from the included ingredients.\n"
+          },
+          {
+            "name": "goodIngsRel",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "eq",
+                "gt",
+                "lt",
+                "ge",
+                "le"
+              ]
+            },
+            "description": "This is required only in case the searchMode param is composedofnumber. It defines the how to interpret the goodIngs parameter.\n * eq - equal\n * gt - greater than\n * lt - less than\n * ge - greater than or equal\n * le - less than or equal\n"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            }
+          },
+          {
+            "name": "goodIngsRatio",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "format": "float",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "description": "This is required only in case the searchMode param is composedofratio. It\n"
+          },
+          {
+            "name": "nameLike",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "exIngs",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "name": "exIngTags",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "name": "inIngs",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "name": "inIngTags",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "name": "sourcePages",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "name": "languageId",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of recipes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecipePage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recipes/{id}": {
+      "get": {
+        "summary": "A single recipe",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A single recipe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Recipe"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -147,7 +397,7 @@
             "type": "integer"
           },
           "name": {
-            "description": "The name",
+            "description": "The name of the ingredient",
             "type": "string"
           }
         }
@@ -213,6 +463,7 @@
       },
       "Recipe": {
         "type": "object",
+        "description": "A recipe",
         "properties": {
           "id": {
             "type": "integer"
