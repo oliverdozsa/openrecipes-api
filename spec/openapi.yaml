@@ -85,11 +85,32 @@ paths:
           required: false
           schema:
             type: string
-            enum: [composedofnumber, composedofratio]
+            enum: [composed-of-number, composed-of-ratio]
           description: >
             Valid search modes:
-             * composed-of-number - Search is based on the number of ingredients (according to the included ingredients param) in recipes
-             * composed-of-ratio - Search is based on the ratio of ingredients (according to the included ingredients param) in recipes
+             * composed-of-number - Search is based on the number of ingredients (according to the included ingredients (inIngs) param) in recipes
+             * composed-of-ratio - Search is based on the ratio of ingredients (according to the included ingredients (inIngs) param) in recipes
+        - name: inIngs
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          description: >
+            Contains the ids of included ingredients. Must be mutually exclusive with exIngs, and ingredients resolved from exIngTags.
+            It's meaning is defined by the searchMode parameter.
+        - name: inIngTags
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          description: >
+            Contains the ids of included ingredient tags. It has the same meaning that the parameter inIngs, but the tags
+            will be resolved to their corresponding ingredients first. If both inIngs and inIngTags are present, ingredients
+            after resolution will be joined in a set.
         - name: minIngs
           in: query
           required: false
@@ -127,7 +148,7 @@ paths:
             type: integer
             minimum: 0
           description: >
-            This is required only in case the searchMode param is composedofnumber. It defines how many unknown
+            This is required only in case the searchMode param is composed-of-number. It defines how many unknown
             ingredients to consider (ingredients that aren't part of the included ingredients).
         - name: unknownIngsRel
           in: query
@@ -136,7 +157,7 @@ paths:
             type: string
             enum: [eq, gt, lt, ge, le]
           description: >
-            This is required only in case the searchMode param is composedofnumber. It defines the how to interpret the
+            This is required only in case the searchMode param is composed-of-number. It defines the how to interpret the
             unknownIngs parameter.
              * eq - equal
              * gt - greater than
@@ -150,7 +171,7 @@ paths:
             type: integer
             minimum: 0
           description: >
-            This is required only in case the searchMode param is composedofnumber. It defines how many
+            This is required only in case the searchMode param is composed-of-number. It defines how many
             ingredients to consider from the included ingredients.
         - name: goodIngsRel
           in: query
@@ -159,7 +180,7 @@ paths:
             type: string
             enum: [eq, gt, lt, ge, le]
           description: >
-            This is required only in case the searchMode param is composedofnumber. It defines the how to interpret the
+            This is required only in case the searchMode param is composed-of-number. It defines the how to interpret the
             goodIngs parameter.
              * eq - equal
              * gt - greater than
@@ -181,51 +202,62 @@ paths:
             maximum: 50
         - name: goodIngsRatio
           in: query
+          required: false
           schema:
             type: number
             format: float
             minimum: 0.0
             maximum: 1.0
           description: >
-            This is required only in case the searchMode param is composedofratio. It
+            This is required only in case the searchMode param is composed-of-ratio. It defines the ratio of ingredients
+            that are present in the included ingredients compared to the number of ingredients in recipes.
+            In more detail, for each recipe it's calculated how many of its ingredients are present in the included
+            ingredients. Then this number is divided by the total number of ingredient of the recipe.
+            Recipes that have greater or equal ratio than this number will be returned.
         - name: nameLike
           in: query
+          required: false
           schema:
             type: string
+          description: >
+            Recipes with names like the value of this parameter will be included in the search
         - name: exIngs
           in: query
+          required: false
           schema:
             type: array
             items:
               type: integer
+          description: >
+            Contains the ids of excluded ingredients. Must be mutually exclusive with inIngs, and ingredients resolved from ingIngTags.
+            Recipes that have any of its ingredient in this list will be excluded.
         - name: exIngTags
           in: query
+          required: false
           schema:
             type: array
             items:
               type: integer
-        - name: inIngs
-          in: query
-          schema:
-            type: array
-            items:
-              type: integer
-        - name: inIngTags
-          in: query
-          schema:
-            type: array
-            items:
-              type: integer
+          description: >
+            Contains the ids of excluded ingredient tags. It has the same meaning that the parameter exIngs, but the tags
+            will be resolved to their corresponding ingredients first. If both exIngs and exIngTags are present, ingredients
+            after resolution will be joined in a set.
         - name: sourcePages
           in: query
+          required: false
           schema:
             type: array
             items:
               type: integer
+          description: >
+            Ids of source pages. Only recipes that are from these source pages will be searched.
         - name: languageId
           in: query
+          required: false
           schema:
             type: integer
+          description: >
+            Language id for recipes' ingredient names.
       responses:
         '200':
           description: A page of recipes
@@ -233,6 +265,30 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RecipePage'
+              example:
+                {
+                  totalCount: 10,
+                  items: [
+                    {
+                      id: 1, name: "Fried egg", url: "http://example.com/fried-egg", numofings: 2,
+                      sourcePage: {id: 1, name: "Example Recipes"},
+                      ingredients: [{id: 31, name: "egg"}, {id: 21, name: "oil"}]
+                    }
+                  ]
+                }
+        '400':
+          description: Map of error keys to error messages
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+              example:
+                "languagedId": ["Missing field", "Another problem"]
+                "": ["Some global errors", "And some more"]
 
   '/recipes/{id}':
     get:
