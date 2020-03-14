@@ -47,7 +47,7 @@ paths:
                 $ref: '#/components/schemas/IngredientNamePage'
               example:
                 totalCount: 2
-                items: [{ingredientId: 1, name: 'Lemon'}, {ingredientId: 2, name: 'Orange'}]
+                items: [{id: 1, name: 'Lemon'}, {id: 2, name: 'Orange'}]
         '400':
           description: Map of error keys to error messages
           content:
@@ -62,6 +62,59 @@ paths:
                 "languagedId": ["Missing field", "Another problem"]
                 "": ["Some global errors", "And some more"]
 
+  '/ingredienttags':
+    get:
+      summary: Query a page of ingredient tags
+      parameters:
+        - name: languageId
+          in: query
+          schema:
+            type: integer
+          required: true
+        - name: nameLike
+          in: query
+          schema:
+            type: string
+            minLength: 2
+          required: false
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          required: false
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 50
+            default: 25
+      responses:
+        '200':
+          description: Page of ingredient tags.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IngredientTagPage'
+              example:
+                totalCount: 2
+                items: [{id: 1, name: 'Fruit'}, {id: 2, name: 'Vegetable'}]
+        '400':
+          description: Map of error keys to error messages
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+              example:
+                "languagedId": ["Missing field", "Another problem"]
+                "": ["Some global errors", "And some more"]
+  
   '/sourcepages':
     get:
       summary: All source pages
@@ -314,7 +367,7 @@ components:
       type: object
       properties:
         id:
-          description: ID
+          description: ID of ingredient
           type: integer
         name:
           description: The name of the ingredient
@@ -377,3 +430,23 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/IngredientName'
+    IngredientTag:
+      description: An ingredient tag
+      type: object
+      properties:
+        id:
+          description: ID og tag
+          type: integer
+        name:
+          description: Name
+          type: string
+    IngredientTagPage:
+      description: Page of ingredient tags.
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/IngredientTag'
+        totalCount:
+          type: integer
